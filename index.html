@@ -1,0 +1,1719 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop Manager Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+        --accent: #f1f5f9;
+        --smp-font: 'Inter', system-ui, -apple-system, sans-serif;
+      }
+
+      [data-bs-theme="dark"] {
+        --bg: #0f172a;
+        --surface: #1e293b;
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --border: #334155;
+        --accent: #0f172a;
+      }
+
+      body {
+        font-family: var(--smp-font);
+        background-color: var(--bg);
+        color: var(--text-main);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        min-height: 100vh;
+      }
+
+      /* Navbar styling */
+      .navbar {
+        background: var(--surface) !important;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+      }
+      .navbar-brand {
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        color: var(--text-main) !important;
+      }
+      .navbar-brand i {
+        color: var(--primary) !important;
+      }
+      .search-group {
+        max-width: 480px;
+        width: 100%;
+        position: relative;
+      }
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        z-index: 5;
+      }
+      .navbar-search {
+        padding-left: 38px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background-color: var(--accent) !important;
+        color: var(--text-main) !important;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      .navbar-search:focus {
+        background-color: var(--surface) !important;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        outline: none;
+      }
+      .navbar-search::placeholder {
+        color: var(--text-muted);
+      }
+
+      #darkModeToggle, #threeDotDropdown {
+        color: var(--text-main) !important;
+        border: 1px solid var(--border) !important;
+        background-color: var(--surface);
+        transition: all 0.2s;
+      }
+      #darkModeToggle:hover, #threeDotDropdown:hover {
+        background-color: var(--accent);
+        border-color: var(--text-muted) !important;
+      }
+
+      /* Product cards pricing and animations */
+      .product-card {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background-color: var(--surface);
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .product-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        border-color: var(--primary);
+      }
+
+      .product-img-wrapper {
+        position: relative;
+        padding-top: 75%; /* 4:3 Ratio */
+        overflow: hidden;
+        background-color: var(--accent);
+      }
+      .product-img-wrapper img {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+      .product-card:hover .product-img-wrapper img {
+        transform: scale(1.04);
+      }
+
+      .category-pills-row::-webkit-scrollbar {
+        height: 5px;
+      }
+      .category-pills-row::-webkit-scrollbar-thumb {
+        background-color: var(--border);
+        border-radius: 4px;
+      }
+
+      .category-pill {
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        background-color: var(--surface);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+      }
+      .category-pill:hover {
+        background-color: var(--accent);
+        color: var(--text-main);
+        border-color: var(--text-muted);
+      }
+      .category-pill.active {
+        background-color: var(--primary);
+        color: #ffffff !important;
+        border-color: var(--primary);
+        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
+      }
+
+      /* Upload area style */
+      .upload-area {
+        border: 2px dashed var(--border);
+        border-radius: 8px;
+        padding: 24px;
+        text-align: center;
+        background-color: var(--accent);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .upload-area:hover, .upload-area.dragover {
+        border-color: var(--primary);
+        background-color: rgba(37, 99, 235, 0.04);
+      }
+
+      /* Uploaded thumbnails list */
+      .thumbnail-container {
+        position: relative;
+        display: inline-block;
+        margin: 6px;
+      }
+      .thumbnail-preview {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+      }
+      .thumbnail-delete-btn {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #dc3545;
+        color: #ffffff;
+        border: none;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+        transition: background-color 0.2s;
+      }
+      .thumbnail-delete-btn:hover {
+        background-color: #bd2130;
+      }
+
+      /* Admin banner badge badge */
+      .admin-panel {
+        background-color: var(--surface);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+      }
+      .admin-panel label {
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        color: var(--text-muted) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px;
+      }
+      .admin-panel input, .admin-panel select, .admin-panel textarea {
+        padding: 10px 12px !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+        font-size: 14px !important;
+        background-color: var(--accent) !important;
+        color: var(--text-main) !important;
+        box-shadow: none !important;
+      }
+      .admin-panel input:focus, .admin-panel select:focus, .admin-panel textarea:focus {
+        background-color: var(--surface) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
+        outline: none !important;
+      }
+
+      /* Details screen main layout */
+      .gallery-main-img-wrapper {
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+      }
+
+      /* Custom floating alerts */
+      .toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 1090;
+      }
+
+      .btn-primary {
+        background-color: var(--primary) !important;
+        background-image: none !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        padding: 10px 20px !important;
+        transition: background-color 0.2s;
+      }
+      .btn-primary:hover {
+        background-color: var(--primary-hover) !important;
+      }
+      .btn-outline-primary {
+        color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        padding: 8px 16px !important;
+      }
+      .btn-outline-primary:hover {
+        background-color: var(--primary) !important;
+        color: white !important;
+      }
+      .btn-outline-danger {
+        color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        padding: 8px 16px !important;
+      }
+      .btn-outline-danger:hover {
+        background-color: #dc3545 !important;
+        color: white !important;
+      }
+      .btn-outline-secondary {
+        background-color: transparent !important;
+        color: var(--text-main) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        padding: 10px 20px !important;
+      }
+      .btn-outline-secondary:hover {
+        background-color: var(--accent) !important;
+        border-color: var(--text-muted) !important;
+      }
+      .btn-light {
+        background-color: var(--accent) !important;
+        color: var(--text-main) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        padding: 10px 20px !important;
+      }
+      .btn-light:hover {
+        background-color: var(--border) !important;
+      }
+
+      /* Transition effects */
+      .fade-enter-active {
+        transition: opacity 0.3s ease;
+      }
+      
+      .brand-badge {
+        font-size: 0.7rem;
+        background-color: var(--primary);
+        color: #ffffff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        vertical-align: middle;
+        font-weight: 500;
+        margin-left: 8px;
+      }
+
+      /* Breadcrumb */
+      .smp-breadcrumb {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      /* Hero status for counts */
+      .catalog-summary {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+
+      /* Text main and muted colors overrides */
+      .text-secondary {
+        color: var(--text-muted) !important;
+      }
+      .text-muted {
+        color: var(--text-muted) !important;
+      }
+      .text-dark {
+        color: var(--text-main) !important;
+      }
+      .card-title {
+        color: var(--text-main) !important;
+      }
+      h1, h2, h3, h4, h5, h6 {
+        color: var(--text-main);
+      }
+
+      /* Specific adjustments */
+      .dropdown-menu {
+        background-color: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+      }
+      .dropdown-item {
+        color: var(--text-main) !important;
+      }
+      .dropdown-item:hover {
+        background-color: var(--accent) !important;
+      }
+      .dropdown-header {
+        color: var(--text-muted) !important;
+      }
+      .dropdown-divider {
+        border-top: 1px solid var(--border) !important;
+      }
+
+      .alert {
+        background-color: var(--accent) !important;
+        border: 1px solid var(--border) !important;
+        color: var(--text-main) !important;
+      }
+      
+      .modal-content {
+        background-color: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+        color: var(--text-main) !important;
+        border-radius: 12px !important;
+      }
+      .modal-header, .modal-footer {
+        border-color: var(--border) !important;
+      }
+      .modal-body p {
+        color: var(--text-muted) !important;
+      }
+      .modal-body label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .modal-body input {
+        padding: 10px 12px !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+        background-color: var(--accent) !important;
+        color: var(--text-main) !important;
+      }
+      .modal-body input:focus {
+        background-color: var(--surface) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
+      }
+      .input-group-text {
+        background-color: var(--accent) !important;
+        border-color: var(--border) !important;
+        color: var(--text-muted) !important;
+      }
+    </style>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top py-2 px-3">
+      <div class="container-fluid d-flex justify-content-between align-items-center">
+        <a class="navbar-brand d-flex align-items-center me-3" href="#" onclick="goToList(event)">
+          <i class="bi bi-shop me-2 text-warning fs-4"></i>
+          <span>Shop Manager Pro</span>
+          <span class="brand-badge d-none d-sm-inline-block">Admin WebApp</span>
+        </a>
+
+        <div class="d-flex align-items-center flex-grow-1 justify-content-end gap-2 gap-md-3">
+          <form class="search-group d-flex flex-grow-1 flex-md-grow-0" onsubmit="event.preventDefault();">
+            <i class="bi bi-search search-icon"></i>
+            <input 
+              id="globalSearchInput" 
+              type="text" 
+              class="form-control navbar-search" 
+              placeholder="Search products by code, name, category..." 
+              aria-label="Search"
+              oninput="handleSearch(event)"
+            />
+          </form>
+
+          <button 
+            id="darkModeToggle" 
+            class="btn btn-outline-light rounded-circle p-2 d-flex align-items-center justify-content-center" 
+            style="width: 40px; height: 40px;"
+            type="button" 
+            onclick="toggleDark()"
+            title="Toggle theme"
+          >
+            <i id="themeIcon" class="bi bi-moon-stars-fill text-warning"></i>
+          </button>
+
+          <div id="authContainer">
+            <button 
+              id="loginNavBtn" 
+              class="btn btn-warning fw-600 rounded-pill px-3" 
+              type="button" 
+              data-bs-toggle="modal" 
+              data-bs-target="#loginModal"
+            >
+              <i class="bi bi-person-fill-lock me-1"></i>Login
+            </button>
+          </div>
+
+          <div class="dropdown">
+            <button 
+              class="btn btn-outline-light rounded-circle p-2 d-flex align-items-center justify-content-center" 
+              style="width: 40px; height: 40px;"
+              type="button" 
+              id="threeDotDropdown" 
+              data-bs-toggle="dropdown" 
+              aria-expanded="false" 
+              title="More options"
+            >
+              <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-3" aria-labelledby="threeDotDropdown">
+              <li><h6 class="dropdown-header">System Tools</h6></li>
+              <li>
+                <a class="dropdown-item d-flex align-items-center" href="#" onclick="event.preventDefault(); loadDemoProducts();">
+                  <i class="bi bi-lightning-charge-fill text-warning me-2"></i> Load Demo Products
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex align-items-center" href="#" onclick="event.preventDefault(); exportData();">
+                  <i class="bi bi-download text-primary me-2"></i> Export Data (JSON)
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex align-items-center" href="#" onclick="event.preventDefault(); triggerImport();">
+                  <i class="bi bi-upload text-success me-2"></i> Import Data (JSON)
+                </a>
+                <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importData(event)" />
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item d-flex align-items-center text-danger" href="#" onclick="event.preventDefault(); clearAllData();">
+                  <i class="bi bi-trash3-fill me-2"></i> Clear Database
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><span class="dropdown-item-text text-muted small"><i class="bi bi-info-circle me-1"></i> SMP Version 1.0</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container my-4 py-1">
+
+      <div id="adminNoticeBanner" class="alert alert-info alert-dismissible fade show rounded-3 p-3 mb-4 d-none" role="alert">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-shield-lock-fill text-primary fs-3 me-3"></i>
+          <div>
+            <h6 class="alert-heading font-bold mb-1">Admin Session Active</h6>
+            <span class="small">You now have authorization to Add, Edit, Delete products. All changes are stored securely on Firebase Cloud Database.</span>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+      <div id="catalogViewSection">
+        
+        <div id="adminPanelSection" class="mb-5 d-none">
+          <div class="card admin-panel border-0 shadow">
+            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <span class="badge bg-primary rounded-circle p-2 me-3 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                  <i id="panelHeaderIcon" class="bi bi-plus-circle-fill text-white fs-5"></i>
+                </span>
+                <div>
+                  <h4 id="panelTitle" class="mb-0 fw-bold">Add Product</h4>
+                  <p class="text-muted small mb-0">Fill out details to save to your cloud database</p>
+                </div>
+              </div>
+              <span id="editModeIndicator" class="badge bg-warning text-dark d-none">Edit Mode Active</span>
+            </div>
+            
+            <div class="card-body p-4">
+              <form id="productForm" onsubmit="event.preventDefault(); addProduct();">
+                <div class="row g-3">
+                  <div class="col-md-6 col-lg-4">
+                    <label for="pName" class="form-label text-secondary small fw-bold">Product Name *</label>
+                    <input type="text" id="pName" class="form-control form-control-md rounded-2" placeholder="e.g. Mechanical Keyboard" required />
+                  </div>
+
+                  <div class="col-md-6 col-lg-4">
+                    <label for="pCode" class="form-label text-secondary small fw-bold d-flex justify-content-between">
+                      <span>Product Code *</span>
+                      <a href="#" class="text-primary text-decoration-none" onclick="event.preventDefault(); generateProductCode();" style="font-size: 0.75rem;">
+                        <i class="bi bi-arrow-repeat me-1"></i>Auto-Generate
+                      </a>
+                    </label>
+                    <input type="text" id="pCode" class="form-control form-control-md rounded-2" placeholder="e.g. SMP-9921" required />
+                  </div>
+
+                  <div class="col-md-6 col-lg-4">
+                    <label for="pCategory" class="form-label text-secondary small fw-bold">Category *</label>
+                    <div class="input-group">
+                      <select id="pCategorySelect" class="form-select form-select-md" onchange="handleCategorySelectChange()">
+                        <option value="Electronics">Electronics</option>
+                        <option value="Apparel">Apparel</option>
+                        <option value="Home & Kitchen">Home & Kitchen</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Wearables">Wearables</option>
+                        <option value="Other">Other (Create New Below)</option>
+                      </select>
+                    </div>
+                    <div id="customCategoryContainer" class="mt-2 d-none">
+                      <input type="text" id="pCustomCategory" class="form-control form-control-sm rounded-2" placeholder="Enter custom category name" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 col-lg-4">
+                    <label for="pSellingPrice" class="form-label text-secondary small fw-bold">Selling Price ($) *</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-light text-muted">$</span>
+                      <input type="number" step="0.01" id="pSellingPrice" class="form-control form-control-md" placeholder="199.99" min="0.01" required />
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 col-lg-4">
+                    <label for="pBuyingPrice" class="form-label text-secondary small fw-bold">Buying Price ($) *</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-light text-muted">$</span>
+                      <input type="number" step="0.01" id="pBuyingPrice" class="form-control form-control-md" placeholder="95.00" min="0.01" required />
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 col-lg-4">
+                    <label for="pBrand" class="form-label text-secondary small fw-bold">Brand / Supplier *</label>
+                    <input type="text" id="pBrand" class="form-control form-control-md rounded-2" placeholder="e.g. CoreTech" required />
+                  </div>
+
+                  <div class="col-md-6 col-lg-4">
+                    <label for="pDate" class="form-label text-secondary small fw-bold">Date Received *</label>
+                    <input type="date" id="pDate" class="form-control form-control-md rounded-2" required />
+                  </div>
+
+                  <div class="col-md-6 col-lg-8">
+                    <label for="pDesc" class="form-label text-secondary small fw-bold">Description</label>
+                    <textarea id="pDesc" rows="1" class="form-control form-control-md rounded-2" placeholder="Provide product specifications and descriptions..."></textarea>
+                  </div>
+
+                  <div class="col-12 mt-3">
+                    <label class="form-label text-secondary small fw-bold mb-2">Product Images (Supports Multiple Uploads)</label>
+                    
+                    <div id="imageDragArea" class="upload-area" onclick="triggerFileInput()">
+                      <i class="bi bi-images text-primary fs-2 mb-2 d-none d-sm-inline-block"></i>
+                      <p class="mb-1 text-secondary font-medium">Drag & drop files here, or <span class="text-primary text-decoration-underline font-bold">click to browse</span></p>
+                      <p class="text-muted small mb-0">Supports JPG, PNG, GIF or WebP formats</p>
+                      <input type="file" id="pImagesInput" multiple accept="image/*" class="d-none" onchange="handleImageFiles(this.files)" />
+                    </div>
+
+                    <div id="imagePreviewArea" class="mt-3 d-flex flex-wrap align-items-center">
+                      </div>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex gap-2">
+                  <button type="submit" id="saveProductBtn" class="btn btn-primary px-4 rounded-pill">
+                    <i class="bi bi-check-lg me-1"></i>Save Product
+                  </button>
+                  <button type="button" id="cancelEditBtn" class="btn btn-outline-secondary px-4 rounded-pill d-none" onclick="cancelEditMode()">
+                    <i class="bi bi-x-lg me-1"></i>Cancel Edit
+                  </button>
+                  <button type="button" class="btn btn-light text-secondary border px-4 rounded-pill" onclick="resetForm()">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset Form
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="row align-items-center mb-4 g-3">
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small uppercase fw-bold text-secondary text-uppercase tracking-wider">Browse by Category</span>
+              <span id="activeFiltersSummary" class="catalog-summary"></span>
+            </div>
+            <div id="categoryPillsContainer" class="d-flex gap-2 pb-2 overflow-x-auto category-pills-row">
+              <span class="category-pill active" onclick="filterByCategory('All')">All Products</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="productGridContainer" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+          </div>
+
+        <div id="emptyCatalogState" class="text-center py-5 d-none my-4">
+          <div class="mb-4">
+            <span class="bg-white dark-bg p-4 rounded-circle d-inline-flex justify-content-center align-items-center shadow-sm" style="width: 100px; height: 100px;">
+              <i class="bi bi-search text-muted" style="font-size: 2.5rem;"></i>
+            </span>
+          </div>
+          <h4 class="fw-bold mb-1">No Products Found</h4>
+          <p class="text-secondary mb-4 max-w-md mx-auto small">We couldn't find any products in this database matching your criteria. Try adjusting your search query, selecting another category, or load our pre-configured gorgeous demo data.</p>
+          <div class="d-flex gap-2 justify-content-center">
+            <button class="btn btn-primary rounded-pill px-4" onclick="loadDemoProducts()">
+              <i class="bi bi-magic me-1"></i>Load Demo Data
+            </button>
+            <button class="btn btn-outline-secondary rounded-pill px-4" onclick="resetSearchFilters()">
+              <i class="bi bi-arrow-clockwise me-1"></i>Reset Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="productDetailSection" class="d-none">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <button class="btn btn-light border rounded-pill px-3 shadow-sm d-flex align-items-center" onclick="closeDetail()">
+            <i class="bi bi-arrow-left me-2"></i>Back to Catalog
+          </button>
+          <div id="detailActionButtons" class="d-flex gap-2 d-none">
+            <button id="detailEditBtn" class="btn btn-outline-primary rounded-pill px-3 py-1">
+              <i class="bi bi-pencil-square me-1"></i>Edit
+            </button>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow rounded-4 overflow-hidden mb-5">
+          <div class="card-body p-4 p-md-5">
+            <div class="row g-4 g-lg-5">
+              
+              <div class="col-md-6">
+                <div class="gallery-main-img-wrapper mb-3 text-center d-flex align-items-center justify-content-center" style="height: 400px; background-color: #f8f9fa;">
+                  <img id="detailMainImage" src="" alt="Active main display" class="img-fluid rounded-4" style="max-height: 100%; object-fit: contain;" />
+                </div>
+                <div id="detailThumbnailsStrip" class="d-flex flex-wrap gap-2 justify-content-center pt-1">
+                  </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <span id="detailCategoryBadge" class="badge bg-primary rounded-pill px-3 py-2 text-uppercase fs-12 uppercase"></span>
+                  <span id="detailBrandText" class="text-secondary fw-semibold small"></span>
+                </div>
+
+                <h1 id="detailName" class="h2 fw-bold text-gradient mb-2"></h1>
+
+                <div class="d-flex align-items-center flex-wrap gap-3 py-2 border-bottom border-top my-3">
+                  <div>
+                    <span class="text-secondary d-block small">Selling Price</span>
+                    <strong id="detailPrice" class="h3 fw-bold text-primary mb-0">$0.00</strong>
+                  </div>
+
+                  <div id="adminDetailPricing" class="d-none border-start ps-3 border-secondary-subtle">
+                    <span class="text-danger d-block small"><i class="bi bi-eye-fill me-1"></i>Admin: Buying Price</span>
+                    <strong id="detailBuyingPrice" class="h4 text-danger fw-bold mb-0"></strong>
+                    <span id="detailProfitMargin" class="badge bg-success-subtle text-success ms-2 rounded-2 animate-pulse font-mono align-middle"></span>
+                  </div>
+                </div>
+
+                <div class="mt-3">
+                  <table class="table table-borderless align-middle table-sm">
+                    <tbody>
+                      <tr>
+                        <td class="text-secondary fw-bold" style="width: 120px; font-size: 0.9rem;">Product Code:</td>
+                        <td><code id="detailCode" class="text-dark bg-light px-2 py-1 rounded border small fw-bold"></code></td>
+                      </tr>
+                      <tr>
+                        <td class="text-secondary fw-bold" style="font-size: 0.9rem;">supplier / brand:</td>
+                        <td id="detailBrand" class="text-uppercase font-mono small text-secondary"></td>
+                      </tr>
+                      <tr>
+                        <td class="text-secondary fw-bold" style="font-size: 0.9rem;">Date Added:</td>
+                        <td id="detailDate" class="text-secondary small"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="mt-4">
+                  <h6 class="fw-bold mb-2">Description</h6>
+                  <p id="detailDesc" class="text-secondary small leading-relaxed" style="white-space: pre-line;"></p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+            <h5 class="modal-title fw-bold" id="loginModalLabel">
+              <i class="bi bi-shield-lock-fill text-warning me-2"></i>Admin Identification
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <p class="text-muted small mb-4">Please log in using your admin credentials to access inventory controls.</p>
+            
+            <div id="loginAlertBox" class="alert alert-danger px-3 py-2 rounded-2 d-none" role="alert">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              <span id="loginAlertText" class="small">Incorrect admin email or password.</span>
+            </div>
+
+            <form id="loginForm" onsubmit="event.preventDefault(); login();">
+              <div class="mb-3">
+                <label for="adminId" class="form-label text-secondary small fw-bold">Admin ID</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted"><i class="bi bi-person"></i></span>
+                  <input type="text" class="form-control" id="adminId" placeholder="admin" required />
+                </div>
+                <div class="form-text fs-11">Default ID is <code class="bg-light px-1">admin</code></div>
+              </div>
+              <div class="mb-4">
+                <label for="adminPassword" class="form-label text-secondary small fw-bold">Password</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted"><i class="bi bi-lock"></i></span>
+                  <input type="password" class="form-control" id="adminPassword" placeholder="1234" required />
+                </div>
+                <div class="form-text fs-11">Default Password is <code class="bg-light px-1">1234</code></div>
+              </div>
+
+              <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary rounded-pill py-2 font-bold shadow-sm">
+                  <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header border-bottom-0 pb-0 pt-4 px-4 justify-content-center">
+            <div class="text-center">
+              <div class="bg-danger-subtle text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px;">
+                <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+              </div>
+              <h5 class="modal-title fw-bold" id="deleteConfirmModalLabel">Delete Product?</h5>
+            </div>
+          </div>
+          <div class="modal-body px-4 text-center">
+            <p class="text-muted small mb-0">Are you sure you want to delete <strong id="deleteProductName" class="text-dark"></strong>?</p>
+            <p class="text-secondary small fw-semibold mt-1">This action cannot be undone.</p>
+          </div>
+          <div class="modal-footer border-top-0 px-4 pb-4 pt-2 d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary flex-grow-1 rounded-pill m-0" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" id="confirmDeleteBtn" class="btn btn-danger flex-grow-1 rounded-pill m-0" style="background-color: #dc3545 !important;">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container">
+      <div id="appToast" class="toast align-items-center text-white border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body d-flex align-items-center gap-2">
+            </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+    <script>
+      // FIREBASE INITIALIZATION
+      const firebaseConfig = {
+        apiKey: "AIzaSyAOqEQarsM4Uq91yGloD0onKniUXMpWIs0",
+        authDomain: "shop-manager-pro-52fdd.firebaseapp.com",
+        databaseURL: "https://shop-manager-pro-52fdd-default-rtdb.firebaseio.com",
+        projectId: "shop-manager-pro-52fdd",
+        storageBucket: "shop-manager-pro-52fdd.firebasestorage.app",
+        messagingSenderId: "578116394224",
+        appId: "1:578116394224:web:e4785027dcd2aef42af635"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const productsRef = database.ref('products');
+
+      // DATA STORES AND SYSTEM STATE
+      let products = [];
+      let loggedIn = false;
+      let editingId = null;
+      let uploadedImages = []; 
+      let productToDeleteId = null;
+      let currentDetailId = null;
+      let currentCategoryFilter = 'All';
+      let searchKeyword = '';
+
+      // Set Date element default value on admin panel load
+      const defaultDateInput = () => {
+        const dateField = document.getElementById('pDate');
+        if (dateField) {
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const mm = String(today.getMonth() + 1).padStart(2, '0');
+          const dd = String(today.getDate()).padStart(2, '0');
+          dateField.value = `${yyyy}-${mm}-${dd}`;
+        }
+      };
+
+      // 2. BOOTSTRAP INITIALIZATION ON WINDOW LOAD
+      window.addEventListener('DOMContentLoaded', () => {
+        
+        // REALTIME FIREBASE SYNC: ডেটাবেজে কোনো পরিবর্তন হলে নিজে থেকেই পেজ আপডেট হবে
+        productsRef.on('value', (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            // Firebase object-কে অ্যারে লিস্টে রূপান্তর করা
+            products = Object.keys(data).map(key => ({
+              id: key,
+              ...data[key]
+            }));
+          } else {
+            products = [];
+          }
+          
+          // লাইভ রাউটিং চেক ও রেন্ডার করা
+          const hash = window.location.hash;
+          if (hash.startsWith('#product-')) {
+            const id = hash.replace('#product-', '');
+            if (products.some(p => p.id === id)) {
+              openDetail(id, false);
+              return;
+            }
+          }
+          render();
+        });
+
+        // Set up the listener for our delete confirmation modal
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        if (confirmDeleteBtn) {
+          confirmDeleteBtn.addEventListener('click', () => {
+            if (!productToDeleteId) return;
+            
+            // Firebase থেকে রিমুভ করা
+            database.ref('products/' + productToDeleteId).remove()
+            .then(() => {
+              if (editingId === productToDeleteId) {
+                cancelEditMode();
+              }
+
+              if (currentDetailId === productToDeleteId) {
+                closeDetail();
+              }
+
+              const modalEl = document.getElementById('deleteConfirmModal');
+              const modalInstance = bootstrap.Modal.getInstance(modalEl);
+              if (modalInstance) {
+                modalInstance.hide();
+              }
+
+              showToast('Product successfully deleted from cloud.', 'bg-danger text-white');
+              productToDeleteId = null;
+            })
+            .catch(err => {
+              showToast('Error deleting product: ' + err.message, 'bg-danger text-white');
+            });
+          });
+        }
+
+        // Load Auth State
+        const savedAuth = localStorage.getItem('smp_admin_logged_in');
+        if (savedAuth === 'true') {
+          loggedIn = true;
+          updateAuthUI();
+        }
+
+        // Load Dark Mode Preference
+        const themePref = localStorage.getItem('smp_theme');
+        if (themePref === 'dark') {
+          document.documentElement.setAttribute('data-bs-theme', 'dark');
+          const themeIcon = document.getElementById('themeIcon');
+          themeIcon.className = 'bi bi-sun-fill text-warning';
+        } else {
+          document.documentElement.setAttribute('data-bs-theme', 'light');
+        }
+
+        // Set default date
+        defaultDateInput();
+
+        // Drag & Drop Listeners
+        initializeDragDrop();
+      });
+
+      // Browser History Router Implementation
+      const handleHashRoute = () => {
+        const hash = window.location.hash;
+        if (hash.startsWith('#product-')) {
+          const id = hash.replace('#product-', '');
+          const match = products.find(p => p.id === id);
+          if (match) {
+            openDetail(id, false);
+          }
+        } else {
+          closeDetail(false);
+        }
+      };
+
+      window.addEventListener('popstate', (e) => {
+        if (e.state && e.state.view === 'detail') {
+          openDetail(e.state.productId, false);
+        } else {
+          closeDetail(false);
+        }
+      });
+
+      // 3. SEPARATE CORE FUNCTION: toggleDark()
+      function toggleDark() {
+        const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-bs-theme', nextTheme);
+        localStorage.setItem('smp_theme', nextTheme);
+
+        const themeIcon = document.getElementById('themeIcon');
+        if (nextTheme === 'dark') {
+          themeIcon.className = 'bi bi-sun-fill text-warning';
+          showToast('Dark Mode Enabled', 'bg-dark text-white');
+        } else {
+          themeIcon.className = 'bi bi-moon-stars-fill text-warning';
+          showToast('Light Mode Enabled', 'bg-primary text-white');
+        }
+      }
+
+      // 4. SEPARATE CORE FUNCTION: login()
+      function login() {
+        const adminIdEl = document.getElementById('adminId');
+        const passwordEl = document.getElementById('adminPassword');
+        const adminId = adminIdEl ? adminIdEl.value : '';
+        const password = passwordEl ? passwordEl.value : '';
+        const loginAlertBox = document.getElementById('loginAlertBox');
+
+        if (adminId === 'admin' && password === '1234') {
+          loggedIn = true;
+          localStorage.setItem('smp_admin_logged_in', 'true');
+          if (loginAlertBox) {
+            loginAlertBox.classList.add('d-none');
+          }
+          
+          const modalEl = document.getElementById('loginModal');
+          if (modalEl) {
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) {
+              modalInstance.hide();
+            }
+          }
+
+          if (adminIdEl) adminIdEl.value = '';
+          if (passwordEl) passwordEl.value = '';
+
+          updateAuthUI();
+          render();
+          showToast('Log In Successful! Welcome Admin.', 'bg-success text-white');
+        } else {
+          if (loginAlertBox) {
+            loginAlertBox.classList.remove('d-none');
+          }
+        }
+      }
+
+      // 5. SEPARATE CORE FUNCTION: logout()
+      function logout() {
+        loggedIn = false;
+        localStorage.setItem('smp_admin_logged_in', 'false');
+        cancelEditMode();
+        updateAuthUI();
+        render();
+        showToast('Logged Out from Admin Session', 'bg-secondary text-white');
+      }
+
+      function updateAuthUI() {
+        const authContainer = document.getElementById('authContainer');
+        const adminPanelSection = document.getElementById('adminPanelSection');
+        const adminNoticeBanner = document.getElementById('adminNoticeBanner');
+        const adminDetailPricing = document.getElementById('adminDetailPricing');
+        const detailActionButtons = document.getElementById('detailActionButtons');
+
+        if (loggedIn) {
+          if (authContainer) {
+            authContainer.innerHTML = `
+              <div class="dropdown">
+                <button class="btn btn-warning fw-bold rounded-pill px-3 dropdown-toggle" type="button" id="adminUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-shield-check me-1"></i>Admin Panel
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="adminUserDropdown">
+                  <li><span class="dropdown-item-text text-muted small"><b class="text-primary">UID:</b> admin</span></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#adminPanelSection" onclick="event.preventDefault(); const sec = document.getElementById('adminPanelSection'); if (sec) sec.scrollIntoView({behavior: 'smooth'});"><i class="bi bi-gear-fill me-2 text-primary"></i>Manage Inventory</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); logout();"><i class="bi bi-box-arrow-left me-2 text-danger"></i>Sign Out</a></li>
+                </ul>
+              </div>
+            `;
+          }
+          if (adminPanelSection) adminPanelSection.classList.remove('d-none');
+          if (adminNoticeBanner) adminNoticeBanner.classList.remove('d-none');
+          if (adminDetailPricing) adminDetailPricing.classList.remove('d-none');
+          if (detailActionButtons) detailActionButtons.classList.remove('d-none');
+        } else {
+          if (authContainer) {
+            authContainer.innerHTML = `
+              <button class="btn btn-warning fw-600 rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">
+                <i class="bi bi-person-fill-lock me-1"></i>Login
+              </button>
+            `;
+          }
+          if (adminPanelSection) adminPanelSection.classList.add('d-none');
+          if (adminNoticeBanner) adminNoticeBanner.classList.add('d-none');
+          if (adminDetailPricing) adminDetailPricing.classList.add('d-none');
+          if (detailActionButtons) detailActionButtons.classList.add('d-none');
+        }
+      }
+
+      // 6. SEPARATE CORE FUNCTION: render()
+      function render() {
+        const grid = document.getElementById('productGridContainer');
+        const emptyState = document.getElementById('emptyCatalogState');
+
+        const filteredProducts = products.filter(product => {
+          const matchesCategory = (currentCategoryFilter === 'All') || (product.category === currentCategoryFilter);
+          const keyword = searchKeyword.toLowerCase().trim();
+          let matchesKeyword = true;
+          if (keyword) {
+            const nameMatch = product.name ? product.name.toLowerCase().includes(keyword) : false;
+            const categoryMatch = product.category ? product.category.toLowerCase().includes(keyword) : false;
+            const codeMatch = product.code ? product.code.toLowerCase().includes(keyword) : false;
+            matchesKeyword = nameMatch || categoryMatch || codeMatch;
+          }
+          return matchesCategory && matchesKeyword;
+        });
+
+        if (filteredProducts.length === 0) {
+          if (grid) grid.innerHTML = '';
+          if (emptyState) emptyState.classList.remove('d-none');
+        } else {
+          if (emptyState) emptyState.classList.add('d-none');
+          
+          if (grid) {
+            grid.innerHTML = filteredProducts.map(product => {
+            const mainImg = (product.images && product.images.length > 0) ? product.images[0] : getDefaultPlaceholderSVG(product.name);
+
+            let adminActions = '';
+            if (loggedIn) {
+              adminActions = `
+                <div class="card-footer bg-transparent border-top-0 pt-0 pb-3 px-3 d-flex gap-2">
+                  <button class="btn btn-outline-primary btn-sm flex-grow-1 rounded-pill" onclick="event.stopPropagation(); editProduct('${product.id}')">
+                    <i class="bi bi-pencil-square me-1"></i>Edit
+                  </button>
+                  <button class="btn btn-outline-danger btn-sm flex-grow-1 rounded-pill" onclick="event.stopPropagation(); deleteProduct('${product.id}')">
+                    <i class="bi bi-trash-fill me-1"></i>Delete
+                  </button>
+                </div>
+              `;
+            }
+
+            return `
+              <div class="col">
+                <div id="card-${product.id}" class="card product-card shadow-sm h-100" onclick="openDetail('${product.id}')">
+                  <div class="product-img-wrapper">
+                    <img src="${mainImg}" alt="${escapeHtml(product.name)}" class="img-fluid" loading="lazy" />
+                    <span class="position-absolute top-0 start-0 m-3 badge bg-primary text-capitalize">${escapeHtml(product.category)}</span>
+                  </div>
+                  <div class="card-body p-3 d-flex flex-column justify-content-between">
+                    <div>
+                      <span class="text-uppercase font-mono text-muted d-block small" style="font-size: 0.72rem; letter-spacing: 0.5px;">CODE: ${escapeHtml(product.code)}</span>
+                      <h5 class="card-title text-truncate-custom mb-2 font-bold fs-6 mt-1" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;height:42px;line-height:21px;" title="${escapeHtml(product.name)}">
+                        ${escapeHtml(product.name)}
+                      </h5>
+                    </div>
+                    <div class="mt-2 d-flex justify-content-between align-items-center">
+                      <span class="h5 fw-bold text-primary mb-0">$${parseFloat(product.sellingPrice).toFixed(2)}</span>
+                      <span class="text-muted small">${escapeHtml(product.brand)}</span>
+                    </div>
+                  </div>
+                  ${adminActions}
+                </div>
+              </div>
+            `;
+          }).join('');
+          }
+        }
+
+        renderCategoryPills();
+
+        const displayCountElement = document.getElementById('activeFiltersSummary');
+        if (displayCountElement) {
+          displayCountElement.textContent = `Showing ${filteredProducts.length} of ${products.length} Products`;
+        }
+      }
+
+      function renderCategoryPills() {
+        const container = document.getElementById('categoryPillsContainer');
+        const defaultCategories = ["Electronics", "Apparel", "Home & Kitchen", "Accessories", "Wearables"];
+        
+        const foundCategories = new Set();
+        products.forEach(p => {
+          if (p.category) foundCategories.add(p.category);
+        });
+
+        const allCategories = Array.from(new Set([...defaultCategories, ...foundCategories])).sort();
+
+        let pillsHtml = `
+          <button class="category-pill ${currentCategoryFilter === 'All' ? 'active' : ''}" onclick="filterByCategory('All')">
+            All (${products.length})
+          </button>
+        `;
+
+        allCategories.forEach(cat => {
+          const count = products.filter(p => p.category === cat).length;
+          if (count > 0 || defaultCategories.includes(cat)) {
+            pillsHtml += `
+              <button class="category-pill ${currentCategoryFilter === cat ? 'active' : ''}" onclick="filterByCategory('${escapeHtml(cat)}')">
+                ${escapeHtml(cat)} (${count})
+              </button>
+            `;
+          }
+        });
+
+        container.innerHTML = pillsHtml;
+
+        const pCategorySelect = document.getElementById('pCategorySelect');
+        if (pCategorySelect) {
+          const currentSelected = pCategorySelect.value;
+          let selectHtml = '';
+          allCategories.forEach(cat => {
+            selectHtml += `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`;
+          });
+          selectHtml += `<option value="Other">Other (Create New Below)</option>`;
+          pCategorySelect.innerHTML = selectHtml;
+          
+          if (currentSelected && Array.from(pCategorySelect.options).some(opt => opt.value === currentSelected)) {
+            pCategorySelect.value = currentSelected;
+          }
+        }
+      }
+
+      function filterByCategory(category) {
+        currentCategoryFilter = category;
+        render();
+      }
+
+      function handleSearch(event) {
+        searchKeyword = event.target.value;
+        render();
+      }
+
+      function resetSearchFilters() {
+        document.getElementById('globalSearchInput').value = '';
+        searchKeyword = '';
+        currentCategoryFilter = 'All';
+        render();
+      }
+
+      // 7. SEPARATE CORE FUNCTION: addProduct()
+      function addProduct() {
+        const pName = document.getElementById('pName').value.trim();
+        const pCode = document.getElementById('pCode').value.trim();
+        const pSellingPrice = parseFloat(document.getElementById('pSellingPrice').value);
+        const pBuyingPrice = parseFloat(document.getElementById('pBuyingPrice').value);
+        const pBrand = document.getElementById('pBrand').value.trim();
+        const pDate = document.getElementById('pDate').value;
+        const pDesc = document.getElementById('pDesc').value.trim();
+        
+        const categorySelect = document.getElementById('pCategorySelect').value;
+        let pCategory = categorySelect;
+        if (categorySelect === 'Other') {
+          const customCat = document.getElementById('pCustomCategory').value.trim();
+          if (!customCat) {
+            showToast('Please type a custom category name', 'bg-danger text-white');
+            return;
+          }
+          pCategory = customCat;
+        }
+
+        if (!pName || !pCode || isNaN(pSellingPrice) || isNaN(pBuyingPrice) || !pCategory) {
+          showToast('Please fill out all required fields marked with *', 'bg-warning text-dark');
+          return;
+        }
+
+        const isDuplicateCode = products.some(p => p.code.toLowerCase() === pCode.toLowerCase() && p.id !== editingId);
+        if (isDuplicateCode) {
+          showToast(`Warning: Product Code "${pCode}" already exists on another item.`, 'bg-danger text-white');
+          return;
+        }
+
+        const productData = {
+          name: pName,
+          code: pCode,
+          sellingPrice: pSellingPrice,
+          buyingPrice: pBuyingPrice,
+          category: pCategory,
+          brand: pBrand,
+          date: pDate,
+          description: pDesc
+        };
+
+        if (editingId) {
+          // Edit Mode: পুরাতন ছবি প্রিজার্ভ করার লজিক
+          const currentItem = products.find(p => p.id === editingId);
+          productData.images = uploadedImages.length > 0 ? uploadedImages : (currentItem.images || []);
+
+          database.ref('products/' + editingId).set(productData)
+          .then(() => {
+            showToast('Product Updated successfully on Cloud!', 'bg-success text-white');
+            cancelEditMode();
+          })
+          .catch(err => showToast('Update failed: ' + err.message, 'bg-danger text-white'));
+
+        } else {
+          // New Add Mode
+          productData.images = [...uploadedImages];
+          const newCustomId = 'smp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+
+          database.ref('products/' + newCustomId).set(productData)
+          .then(() => {
+            showToast('Product Saved successfully to Cloud!', 'bg-success text-white');
+            resetForm();
+          })
+          .catch(err => showToast('Save failed: ' + err.message, 'bg-danger text-white'));
+        }
+      }
+
+      // 8. SEPARATE CORE FUNCTION: editProduct()
+      function editProduct(id) {
+        const item = products.find(p => p.id === id);
+        if (!item) return;
+
+        document.getElementById('pName').value = item.name || '';
+        document.getElementById('pCode').value = item.code || '';
+        document.getElementById('pSellingPrice').value = item.sellingPrice || '';
+        document.getElementById('pBuyingPrice').value = item.buyingPrice || '';
+        document.getElementById('pBrand').value = item.brand || '';
+        document.getElementById('pDate').value = item.date || '';
+        document.getElementById('pDesc').value = item.description || '';
+
+        const categorySelect = document.getElementById('pCategorySelect');
+        const customContainer = document.getElementById('customCategoryContainer');
+        
+        if (categorySelect) {
+          const isPreset = Array.from(categorySelect.options).some(opt => opt.value === item.category);
+          if (isPreset) {
+            categorySelect.value = item.category;
+            if (customContainer) customContainer.classList.add('d-none');
+          } else {
+            categorySelect.value = 'Other';
+            if (customContainer) customContainer.classList.remove('d-none');
+            document.getElementById('pCustomCategory').value = item.category || '';
+          }
+        }
+
+        editingId = id;
+        
+        document.getElementById('cancelEditBtn').classList.remove('d-none');
+        document.getElementById('editModeIndicator').classList.remove('d-none');
+        document.getElementById('saveProductBtn').innerHTML = '<i class="bi bi-pencil-fill me-1"></i>Update Product';
+        document.getElementById('panelTitle').textContent = 'Edit Product';
+        document.getElementById('panelHeaderIcon').className = 'bi bi-pencil-square text-white fs-5';
+
+        uploadedImages = [...(item.images || [])];
+        renderImageThumbnails();
+
+        const adminSection = document.getElementById('adminPanelSection');
+        if (adminSection) {
+          adminSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+
+      function cancelEditMode() {
+        editingId = null;
+        document.getElementById('cancelEditBtn').classList.add('d-none');
+        document.getElementById('editModeIndicator').classList.add('d-none');
+        document.getElementById('saveProductBtn').innerHTML = '<i class="bi bi-check-lg me-1"></i>Save Product';
+        document.getElementById('panelTitle').textContent = 'Add Product';
+        document.getElementById('panelHeaderIcon').className = 'bi bi-plus-circle-fill text-white fs-5';
+        resetForm();
+      }
+
+      function resetForm() {
+        const productForm = document.getElementById('productForm');
+        if (productForm) productForm.reset();
+        const customCategoryContainer = document.getElementById('customCategoryContainer');
+        if (customCategoryContainer) customCategoryContainer.classList.add('d-none');
+        defaultDateInput();
+        uploadedImages = [];
+        renderImageThumbnails();
+      }
+
+      // 9. SEPARATE CORE FUNCTION: deleteProduct()
+      function deleteProduct(id) {
+        const item = products.find(p => p.id === id);
+        if (!item) return;
+
+        productToDeleteId = id;
+        document.getElementById('deleteProductName').textContent = `"${item.name}" (Code: ${item.code})`;
+        
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        deleteModal.show();
+      }
+
+      // 10. SEPARATE CORE FUNCTION: openDetail()
+      function openDetail(id, pushState = true) {
+        const item = products.find(p => p.id === id);
+        if (!item) return;
+
+        currentDetailId = id;
+
+        if (pushState) {
+          history.pushState({ view: 'detail', productId: id }, '', '#product-' + id);
+        }
+
+        document.getElementById('catalogViewSection').classList.add('d-none');
+        document.getElementById('productDetailSection').classList.remove('d-none');
+
+        document.getElementById('detailCategoryBadge').textContent = item.category || '';
+        document.getElementById('detailBrandText').textContent = item.brand || '';
+        document.getElementById('detailName').textContent = item.name || '';
+        document.getElementById('detailPrice').textContent = `$${parseFloat(item.sellingPrice || 0).toFixed(2)}`;
+        document.getElementById('detailCode').textContent = item.code || '';
+        document.getElementById('detailBrand').textContent = item.brand || 'N/A';
+        document.getElementById('detailDate').textContent = item.date || '';
+        document.getElementById('detailDesc').textContent = item.description || 'No description provided for this product.';
+
+        const detailBuyingPrice = document.getElementById('detailBuyingPrice');
+        const detailProfitMargin = document.getElementById('detailProfitMargin');
+        
+        if (loggedIn && item.buyingPrice) {
+          if (detailBuyingPrice) detailBuyingPrice.textContent = `$${parseFloat(item.buyingPrice).toFixed(2)}`;
+          const profit = item.sellingPrice - item.buyingPrice;
+          const marginPercent = ((profit / item.sellingPrice) * 100).toFixed(1);
+          if (detailProfitMargin) {
+            detailProfitMargin.textContent = `Profit: +$${profit.toFixed(2)} (${marginPercent}%)`;
+            detailProfitMargin.className = 'badge bg-success-subtle text-success ms-2 rounded-2';
+          }
+        } else {
+          if (detailBuyingPrice) detailBuyingPrice.textContent = '';
+          if (detailProfitMargin) {
+            detailProfitMargin.textContent = '';
+            detailProfitMargin.className = 'badge';
+          }
+        }
+
+        const mainImgFrame = document.getElementById('detailMainImage');
+        const thumbnailsStrip = document.getElementById('detailThumbnailsStrip');
+        const primaryImage = (item.images && item.images.length > 0) ? item.images[0] : getDefaultPlaceholderSVG(item.name);
+        
+        if (mainImgFrame) mainImgFrame.src = primaryImage;
+
+        if (thumbnailsStrip) {
+          const allImgs = item.images && item.images.length > 0 ? item.images : [primaryImage];
+          if (allImgs.length > 1) {
+            thumbnailsStrip.innerHTML = allImgs.map((img, idx) => {
+              return `
+                <img 
+                  src="${img}" 
+                  alt="Thumbnail preview ${idx+1}"
+                  class="img-thumbnail rounded"
+                  style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; transition: opacity 0.2s; opacity: ${idx === 0 ? '1' : '0.6'}"
+                  onclick="switchDetailMainImage(this, '${img}')"
+                />
+              `;
+            }).join('');
+          } else {
+            thumbnailsStrip.innerHTML = '';
+          }
+        }
+
+        const detailActionButtons = document.getElementById('detailActionButtons');
+        if (detailActionButtons) {
+          if (loggedIn) {
+            detailActionButtons.classList.remove('d-none');
+            document.getElementById('detailEditBtn').onclick = () => {
+              closeDetail();
+              editProduct(id);
+            };
+          } else {
+            detailActionButtons.classList.add('d-none');
+          }
+        }
+
+        window.scrollTo(0, 0);
+      }
+
+      function switchDetailMainImage(thumbnailEl, imgUrl) {
+        const mainImgFrame = document.getElementById('detailMainImage');
+        if (mainImgFrame) mainImgFrame.src = imgUrl;
+        
+        if (thumbnailEl && thumbnailEl.parentElement) {
+          const siblings = thumbnailEl.parentElement.querySelectorAll('img');
+          siblings.forEach(img => img.style.opacity = '0.6');
+          thumbnailEl.style.opacity = '1';
+        }
+      }
+
+      // 11. SEPARATE CORE FUNCTION: closeDetail()
+      function closeDetail(pushState = true) {
+        currentDetailId = null;
+
+        if (pushState) {
+          history.pushState({ view: 'catalog' }, '', ' ');
+        }
+
+        document.getElementById('catalogViewSection').classList.remove('d-none');
+        document.getElementById('productDetailSection').classList.add('d-none');
+
+        render();
+      }
+
+      function goToList(event) {
+        event.preventDefault();
+        closeDetail();
+      }
+
+      // 12. MULTIPLE IMAGES DRAG AND DROP & FILEREADER IMPLEMENTATION
+      function initializeDragDrop() {
+        const dragArea = document.getElementById('imageDragArea');
+        if (!dragArea) return;
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dragArea.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dragArea.classList.add('dragover');
+          }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+          dragArea.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dragArea.classList.remove('dragover');
+          }, false);
+        });
+
+        dragArea.addEventListener('drop', (e) => {
+          handleImageFiles(e.dataTransfer.files);
+        }, false);
+      }
+
+      function triggerFileInput() {
+        document.getElementById('pImagesInput').click();
+      }
+
+      function handleImageFiles(files) {
+        if (!files || files.length === 0) return;
+
+        const maxFiles = 8;
+        if (uploadedImages.length + files.length > maxFiles) {
+          alert(`You can upload a maximum of ${maxFiles} images per product.`);
+          return;
+        }
+
+        Array.from(files).forEach(file => {
+          if (!file.type.startsWith('image/')) {
+            showToast('Invalid file format. Please upload photos only.', 'bg-danger text-white');
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            uploadedImages.push(e.target.result);
+            renderImageThumbnails();
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function renderImageThumbnails() {
+        const area = document.getElementById('imagePreviewArea');
+        if (!area) return;
+
+        if (uploadedImages.length === 0) {
+          area.innerHTML = '<span class="text-muted small italic">No images chosen yet. (Add at least 1 image for best displays)</span>';
+          return;
+        }
+
+        area.innerHTML = uploadedImages.map((imgBase64, index) => {
+          return `
+            <div class="thumbnail-container">
+              <img src="${imgBase64}" alt="Thumb preview" class="thumbnail-preview" />
+              <button type="button" class="thumbnail-delete-btn" onclick="removeUploadedImage(${index})" title="Remove image">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function removeUploadedImage(index) {
+        uploadedImages.splice(index, 1);
+        renderImageThumbnails();
+      }
+
+      function generateProductCode() {
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const prefix = letters.charAt(Math.floor(Math.random() * letters.length)) + letters.charAt(Math.floor(Math.random() * letters.length));
+        const num = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('pCode').value = `SMP-${prefix}-${num}`;
+        showToast('Generated product serial code!', 'bg-success text-white');
+      }
+
+      function handleCategorySelectChange() {
+        const value = document.getElementById('pCategorySelect').value;
+        const container = document.getElementById('customCategoryContainer');
+        if (value === 'Other') {
+          container.classList.remove('d-none');
+          document.getElementById('pCustomCategory').required = true;
+          document.getElementById('pCustomCategory').focus();
+        } else {
+          container.classList.add('d-none');
+          document.getElementById('pCustomCategory').required = false;
+        }
+      }
+
+      // 13. DEMO PRODUCTS GORGEOUS PRE-SETS
+      function loadDemoProducts() {
+        const demoGradientsImages = {
+          headphones: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><defs><linearGradient id='g1' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%236a11cb'/><stop offset='100%' stop-color='%232575fc'/></linearGradient></defs><rect width='400' height='300' fill='url(%23g1)'/><circle cx='200' cy='140' r='50' fill='none' stroke='white' stroke-width='6' stroke-linecap='round' stroke-dasharray='8 6'/><path d='M150 140 L160 140 A10 20 0 0 0 180 140 L170 140 Z' fill='white' stroke='white' stroke-width='4'/><path d='M250 140 L240 140 A10 20 0 0 1 220 140 L230 140 Z' fill='white' stroke='white' stroke-width='4'/><path d='M165 140 A35 35 0 0 1 235 140' fill='none' stroke='white' stroke-width='8' stroke-linecap='round'/><text x='200' y='240' font-family='&quot;Inter&quot;, sans-serif' font-weight='700' font-size='20' fill='white' text-anchor='middle'>WIRELESS SOUND</text><text x='200' y='270' font-family='&quot;Inter&quot;, sans-serif' font-weight='400' font-size='12' fill='white' fill-opacity='0.8' text-anchor='middle'>ZenSound Bluetooth ANC</text></svg>`,
+          laptop: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><defs><linearGradient id='g2' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23f857a6'/><stop offset='100%' stop-color='%23ff5858'/></linearGradient></defs><rect width='400' height='300' fill='url(%23g2)'/><rect x='130' y='100' width='140' height='90' rx='8' fill='none' stroke='white' stroke-width='6'/><line x1='100' y1='196' x2='300' y2='196' stroke='white' stroke-width='6' stroke-linecap='round'/><path d='M110 196 L120 208 A4 4 0 0 0 124 212 L276 212 A4 4 0 0 0 280 208 L290 196 Z' fill='white'/><text x='200' y='250' font-family='&quot;Inter&quot;, sans-serif' font-weight='700' font-size='20' fill='white' text-anchor='middle'>ULTRABOOK PRO 14</text><text x='200' y='276' font-family='&quot;Inter&quot;, sans-serif' font-weight='400' font-size='12' fill='white' fill-opacity='0.8' text-anchor='middle'>Super Retina 120Hz Display</text></svg>`,
+          keyboard: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><defs><linearGradient id='g3' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%2311998e'/><stop offset='100%' stop-color='%2338ef7d'/></linearGradient></defs><rect width='400' height='300' fill='url(%23g3)'/><rect x='110' y='110' width='180' height='70' rx='6' fill='none' stroke='white' stroke-width='5'/><rect x='125' y='125' width='20' height='15' rx='2' fill='white' fill-opacity='0.9'/><rect x='155' y='125' width='20' height='15' rx='2' fill='white' fill-opacity='0.9'/><rect x='185' y='125' width='20' height='15' rx='2' fill='white' fill-opacity='0.9'/><rect x='215' y='125' width='20' height='15' rx='2' fill='white' fill-opacity='0.9'/><rect x='245' y='125' width='20' height='15' rx='2' fill='white' fill-opacity='0.9'/><rect x='125' y='150' width='30' height='15' rx='2' fill='white' fill-opacity='0.9'/><rect x='165' y='150' width='70' height='15' rx='2' fill='white' fill-opacity='0.9'/><rect x='245' y='150' width='30' height='15' rx='2' fill='white' fill-opacity='0.9'/><text x='200' y='240' font-family='&quot;Inter&quot;, sans-serif' font-weight='700' font-size='20' fill='white' text-anchor='middle'>RETRO MECHANICAL</text><text x='200' y='268' font-family='&quot;Inter&quot;, sans-serif' font-weight='400' font-size='12' fill='white' fill-opacity='0.8' text-anchor='middle'>Tactile Brown Switches</text></svg>`,
+          watch: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><defs><linearGradient id='g4' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23fc4a1a'/><stop offset='100%' stop-color='%23f7b733'/></linearGradient></defs><rect width='400' height='300' fill='url(%23g4)'/><rect x='185' y='70' width='30' height='150' rx='8' fill='white' fill-opacity='0.3'/><circle cx='200' cy='145' r='42' fill='none' stroke='white' stroke-width='6'/><circle cx='200' cy='145' r='32' fill='white' fill-opacity='0.2'/><path d='M200 145 L200 120' stroke='white' stroke-width='4' stroke-linecap='round'/><path d='M200 145 L215 145' stroke='white' stroke-width='4' stroke-linecap='round'/><text x='200' y='250' font-family='&quot;Inter&quot;, sans-serif' font-weight='700' font-size='20' fill='white' text-anchor='middle'>CHRONOPRO WATCH</text><text x='200' y='276' font-family='&quot;Inter&quot;, sans-serif' font-weight='400' font-size='12' fill='white' fill-opacity='0.8' text-anchor='middle'>Fitness &amp; Sleep Tracker</text></svg>`,
+          coffee: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><defs><linearGradient id='g5' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%233e5151'/><stop offset='100%' stop-color='%23decba4'/></linearGradient></defs><rect width='400' height='300' fill='url(%23g5)'/><path d='M150 90 L250 90 L250 110 L150 110 Z' fill='white'/><path d='M160 116 L240 116 L230 200 L170 200 Z' fill='none' stroke='white' stroke-width='5'/><path d='M241 130 C260 130 260 170 240 170' fill='none' stroke='white' stroke-width='5'/><path d='M140 205 L260 205' stroke='white' stroke-width='6' stroke-linecap='round'/><text x='200' y='250' font-family='&quot;Inter&quot;, sans-serif' font-weight='700' font-size='19' fill='white' text-anchor='middle'>BARISTA CLASSIC</text><text x='200' y='274' font-family='&quot;Inter&quot;, sans-serif' font-weight='400' font-size='12' fill='white' fill-opacity='0.8' text-anchor='middle'>Semi-Automatic Steamer</text></svg>`
+        };
+
+        const demoProductsData = {
+          demo_1: { name: 'ZenSound Bluetooth Wireless Headphones', code: 'SMP-HEAD-100', sellingPrice: 149.99, buyingPrice: 65.00, category: 'Electronics', brand: 'ZenSound', date: '2026-05-15', description: 'Experience premium high-fidelity audio with active noise-cancellation (ANC)...', images: [demoGradientsImages.headphones] },
+          demo_2: { name: 'UltraBook Pro X14 Laptop', code: 'SMP-LAP-202', sellingPrice: 1299.99, buyingPrice: 850.00, category: 'Electronics', brand: 'CoreTech', date: '2026-05-20', description: 'Lighter, faster, thinner. Packaged with a brilliant 120Hz OLED screen...', images: [demoGradientsImages.laptop] },
+          demo_3: { name: 'Premium Hot-Swappable Clicky Keyboard', code: 'SMP-KEY-33', sellingPrice: 89.99, buyingPrice: 42.00, category: 'Accessories', brand: 'ClickyKeys', date: '2026-05-10', description: 'Unbox tactile gaming satisfaction. Retro style keycaps...', images: [demoGradientsImages.keyboard] },
+          demo_4: { name: 'ChronoPRO Watch Sport Edition', code: 'SMP-WATCH-88', sellingPrice: 199.99, buyingPrice: 95.00, category: 'Wearables', brand: 'FitLife', date: '2026-05-21', description: 'Advanced sports tracker smartwatch tracking daily routines...', images: [demoGradientsImages.watch] },
+          demo_5: { name: 'Barista Espresso Maker & Steamer', code: 'SMP-BREW-990', sellingPrice: 349.99, buyingPrice: 180.00, category: 'Home & Kitchen', brand: 'BrewLine', date: '2026-05-22', description: 'Turn your kitchen into a premium coffee artisan brewing station...', images: [demoGradientsImages.coffee] }
+        };
+
+        // Firebase-এ ডেমো ডেটা পুশ করা
+        productsRef.set(demoProductsData)
+        .then(() => {
+          showToast('Demo Products loaded successfully on Firebase!', 'bg-success text-white');
+        })
+        .catch(err => showToast('Error loading demo: ' + err.message, 'bg-danger text-white'));
+      }
+
+      function clearAllData() {
+        if (confirm("Are you sure you want to delete ALL inventory products? This clears your Firebase cloud storage completely.")) {
+          productsRef.remove()
+          .then(() => {
+            cancelEditMode();
+            showToast('Database wiped out successfully from cloud.', 'bg-danger text-white');
+          })
+          .catch(err => showToast('Clear failed: ' + err.message, 'bg-danger text-white'));
+        }
+      }
+
+      // JSON Backup File Exports & Imports
+      function exportData() {
+        if (products.length === 0) {
+          showToast('No products available to export.', 'bg-warning text-dark');
+          return;
+        }
+
+        const jsonStr = JSON.stringify(products, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `smp_inventory_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showToast('Database JSON exported successfully!', 'bg-success text-white');
+      }
+
+      function triggerImport() {
+        document.getElementById('importFileInput').click();
+      }
+
+      function importData(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const importedArr = JSON.parse(e.target.result);
+            if (Array.isArray(importedArr)) {
+              const valid = importedArr.every(item => item.name && item.code && item.sellingPrice);
+              if (valid) {
+                // Firebase-এ ডেটাগুলো অবজেক্ট ফরম্যাটে আপলোড করা
+                importedArr.forEach(item => {
+                  const id = item.id || 'smp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+                  const uploadItem = {...item};
+                  delete uploadItem.id; // Firebase key হিসেবে id ইউজ হবে
+                  database.ref('products/' + id).set(uploadItem);
+                });
+                showToast(`Successfully imported ${importedArr.length} products to Cloud!`, 'bg-success text-white');
+              } else {
+                alert("Import failed: JSON file contains invalid product schemas.");
+              }
+            } else {
+              alert("Import failed: JSON format must contain a valid array list of items.");
+            }
+          } catch(err) {
+            alert("Error parsing JSON backup file.");
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+      }
+
+      function getDefaultPlaceholderSVG(name) {
+        const title = name ? name.toUpperCase().slice(0, 8) : 'PRODUCT';
+        return `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><defs><linearGradient id='gDefault' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23bdc3c7'/><stop offset='100%' stop-color='%232c3e50'/></linearGradient></defs><rect width='400' height='300' fill='url(%23gDefault)'/><text x='200' y='140' font-family='&quot;Inter&quot;, sans-serif' font-weight='700' font-size='28' fill='white' text-anchor='middle'>SMP PRO</text><text x='200' y='180' font-family='&quot;Inter&quot;, sans-serif' font-weight='500' font-size='16' fill='white' fill-opacity='0.8' text-anchor='middle'>${title}</text></svg>`;
+      }
+
+      function escapeHtml(text) {
+        if (!text) return '';
+        const map = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        };
+        return text.toString().replace(/[&<>"']/g, m => map[m]);
+      }
+
+      function showToast(message, colorClass = 'bg-primary text-white') {
+        const toastEl = document.getElementById('appToast');
+        const toastBody = toastEl.querySelector('.toast-body');
+        
+        toastEl.className = `toast align-items-center ${colorClass} border-0 shadow`;
+        toastBody.innerHTML = `<i class="bi bi-info-circle-fill fs-5 me-2"></i><span>${message}</span>`;
+        
+        const toastInstance = new bootstrap.Toast(toastEl, { delay: 4000 });
+        toastInstance.show();
+      }
+    </script>
+  </body>
+</html>
